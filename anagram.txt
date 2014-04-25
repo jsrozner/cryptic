@@ -521,6 +521,7 @@ squiffy
 staged
 staggering
 stew
+stir
 stormy
 strangely
 stray

@@ -1,6 +1,7 @@
 # Josh Rozner
 
 import anagram
+import common
 import mystring
 
 from anagram import AnagramSolver
@@ -47,12 +48,9 @@ class Term:
 
     self.word = input.lower()
 
-    allDefinitions = []
-    for synset in wn.synsets(self.word):
-      for word in synset.definition.split():
-        if len(word) >= kMinDefinitionWordLength:
-          allDefinitions.append(synset.definition)
-    self.allDefinitions = IndicatorDictionary(allDefinitions.sort())
+    related_words = common.getRelatedWords(self.word, True, 2)
+    print related_words
+    self.allDefinitions = IndicatorDictionary(sorted(set(related_words)))
 
 ''' original clue
 answerlength
@@ -78,16 +76,21 @@ class Clue:
       return
 
     clueWords = clueWords[0:-1] # strip out length
-    print clueWords
     self.word_lengths = map(len, clueWords)
-    print self.word_lengths
     self.terms = map(Term, clueWords)
-    print self.word_lengths
 
-  def checkDefinitions(self, possible_solution):
+  def checkDefinition(self, possible_solution):
+    related_words = common.getRelatedWords(possible_solution, True, 2)
+    print related_words
     for term in self.terms:
       if term.allDefinitions.lookup(possible_solution) is not None:
-        return 1
+        return True
+
+    for word in related_words:
+      if term.allDefinitions.lookup(word) is not None:
+        return True
+
+    return False
 
 def main():
   anagram_solver = AnagramSolver(kAnagramIndicatorFile)
@@ -95,7 +98,8 @@ def main():
     line = raw_input()
     clue = Clue(line)
     solns = anagram_solver.getAnagramSolutions(clue)
+    print "possible solutions:"
     for soln in solns:
-      print soln
+      print set(soln)
 
 main()
