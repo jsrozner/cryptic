@@ -6,4 +6,4 @@ def stripPunctuation(s):
   return s
 
 def startsWithUpperCase(s):
-  return s[0].isUpper()
+  return s[0].isupper()
