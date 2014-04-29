@@ -8,9 +8,10 @@ except:
     print "no arg given"
     exit
 
-db = shelve.open("anag", "r")
+db = shelve.open("data/anagrams.db", "r")
 
 lookup = "".join(sorted(testword.strip()))
+print lookup
 if lookup in db:
     print db[lookup]
 else:

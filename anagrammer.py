@@ -11,10 +11,8 @@ class Anagrammer(object):
             self.db = None
 
     def getAnagrams(self, lookup):
+        lookup = "".join(sorted(lookup))
         if lookup in self.db:
-            return db[lookup]
+            return self.db[lookup]
         else:
             return []
-
-
-

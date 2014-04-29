@@ -1,64 +1,68 @@
-from itertools import permutations
-
-import enchant
+import logging
 
 from solver import IndicatorSolver
+from solver import IndicatorType
+from solution import Solution
 
 
 class AnagramSolver(IndicatorSolver):
-    def __init__(self, indicator_file):
-        print "initializing anagram solver"
-        IndicatorSolver.__init__(self, indicator_file)
-        self.dict = enchant.Dict("en_US")
+    """ A solver for anagram type clues.
 
-    def getAnagramSolutions(self, clue):
-        print "getting anagram solutions"
-        possible_solutions = []
-        # todo: will do duplicate work
+    """
+    def __init__(self, indicator_file, anagrammer):
+        """
+        :type anagrammer: anagrammer.Anagrammer
+        :param indicator_file: str
+        :param anagrammer:
+        """
+        IndicatorSolver.__init__(self, IndicatorType.anagram,
+                                 indicator_file=indicator_file,
+                                 anagrammer=anagrammer)
+        logging.info("Initializing anagram solver")
+
+    def get_anagram_solutions(self, clue):
+        """ Get possible anagram type solutions to clue
+
+
+        :rtype : list main.Solution
+        :param clue: Clue to handle
+        :return: List of solutions
+        """
+        logging.info("Getting anagram solutions")
+        solns = []
+
         for term in clue.terms:
+            logging.debug("Looking for matching indicator: " + term.word)
             if self.indicators.lookup(term.word) is not None:
-                print "got indicator"
-                (single_word_indices,
-                 double_word_indices) = self.getValidLengthCombos(
-                    clue.word_lengths, clue.answer_length)
+                logging.info("Got indicator: " + term.word)
 
-                # todo: clean this up (code dupe)
-                # todo: handle other comboes (remove clue word, parse "with", 3 words)
-                # todo handle abbreviations
-                # todo: can't handle large permutations
-                for pos in single_word_indices:
-                    word_to_permute = clue.terms[pos].word
-                    print "permuting ", word_to_permute
-                    anagrams = self.anagrammer.getAnagrams(word_to_permute)
+                letter_sets_to_permute = self.get_valid_length_combos(clue)
+
+                for letter_set in letter_sets_to_permute:
+                    logging.info("Permuting " + letter_set)
+                    anagrams = self.anagrammer.getAnagrams(letter_set)
+                    logging.info("Valid anagrams: " + str(anagrams))
                     for a in anagrams:
-                        print "valid anagram ", a
-                        if clue.checkDefinition(a):
-                            possible_solutions.append(a)  # todo make explanation note
+                        score = clue.check_definition(a)
+                        if score > 0.0:
+                            soln =  Solution(a, score, clue_type=self.type,
+                                             indicator=term.word)
+                            soln.add_note("Anagrammed from " + letter_set)
+                            solns.append(soln)
 
-                for pos in double_word_indices:
-                    word_to_permute = clue.terms[pos].word + clue.terms[
-                        pos + 1].word
-                    print "permuting ", word_to_permute
-                    anagrams = self.anagrammer.getAnagrams(word_to_permute)
-                    for a in anagrams:
-                        print "valid anagram ", a
-                        if clue.checkDefinition(a):
-                            possible_solutions.append(a)  # todo make explanation note
-
-        return possible_solutions
-
-    def getValidPermutations(self, word):
-        valid_perms = []
-        for p in permutations(word):
-            w = "".join(p)
-            if self.dict.check(w) and not word == w:
-                valid_perms.append(w)
-
-        return set(valid_perms)
+        return solns
 
     # todo: this function should pop out things like "with"
     # todo: handles only two word combos
-    def getValidLengthCombos(self, word_lengths, goal_length):
+    # todo: handle other comboes (remove clue word, parse "with", 3 words)
+    # todo handle abbreviations
+    def get_valid_length_combos(self, clue):
+        """
+
+        :rtype : list[str]
+        """
+        word_lengths = clue.word_lengths
+        goal_length = clue.answer_length
         single_word_indices = []
         double_word_indices = []
 
@@ -70,4 +74,12 @@ class AnagramSolver(IndicatorSolver):
                 and word_lengths[i] + word_lengths[i + 1] == goal_length:
                 double_word_indices.append(i)
 
-        return (single_word_indices, double_word_indices)
+        letter_sets = []
+
+        for pos in single_word_indices:
+            letter_sets.append(clue.terms[pos].word)
+        for pos in double_word_indices:
+            letter_sets.append(clue.terms[pos].word + clue.terms[pos + 1].word)
+
+        return letter_sets
+

@@ -1,4 +1,6 @@
+import logging
 import mystring
+
 from bisect import bisect_left
 from difflib import get_close_matches
 from nltk.corpus import wordnet as wn
@@ -20,7 +22,7 @@ def getRelatedWords(word, should_include_def_terms=False, depth=2):
 
         if should_include_def_terms:
             for def_term in synset.definition.split():
-                stripped_term = mystring.stripPunctuation(def_term)
+                stripped_term = mystring.strip_punctuation(def_term)
                 if len(word) >= kMinSynWordLength:
                     allsyns.append(word)
 
@@ -36,11 +38,12 @@ def getRelatedWords(word, should_include_def_terms=False, depth=2):
 class IndicatorDictionary:
     kMinIndicatorDistance = 0.65
 
+    #todo: this is ugly
     def __init__(self, indicator_file):
         if isinstance(indicator_file, basestring):
-            print "opened indicator file"
             with open(indicator_file) as f:
                 self.dict = [x.strip() for x in f.readlines()]
+            logging.info("Opened indicator file")
         else:
             self.dict = indicator_file
 

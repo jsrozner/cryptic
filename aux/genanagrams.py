@@ -1,16 +1,19 @@
 import shelve
-from bisect import insort
+import bisect
 
-db = shelve.open("anag", "n")
+db = shelve.open("data/anagrams.db")
 
-with open("/usr/share/dict/web2") as f:
+with open("/Users/jsrozner/Downloads/us/US.dic") as f:
     for x in f.readlines():
         x = x.strip()
         str = "".join(sorted(x))
         if str in db:
             temp = db[str]
-            insort(temp, x)
-            db[str] = temp
+            pos_left = bisect.bisect_left(temp, x)
+            pos_right = bisect.bisect_right(temp, x)
+            if pos_left == pos_right:
+                bisect.insort(temp, x)
+                db[str] = temp
         else:
             db[str] = [x]
 

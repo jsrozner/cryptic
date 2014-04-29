@@ -1,61 +1,43 @@
-# Josh Rozner
-
 import argparse
+import logging
 
+from anagrammer import Anagrammer
 from anagramsolver import AnagramSolver
+from clue import Clue
 
 # corpuses
 anagram_indicator_file = "data/anagram.txt"
 anagram_database_file = "data/anagrams.db"
 
-class Solution:
-    """ Encapsulates cryptic crossword solutions
 
-    Attributes:
-        score: an indication of how likely the solution is to be correct
-        notes: newline separated notes on the derivation of the solution
-        solution: the word believed to be a solution
-    """
-    def __init__(self):
-        self.score = -1
-        self.notes = []
-        self.solution = ""
-
-    def addNote(self, note):
-        """ Add a note to a solution
-
-        :param note: string : the note to be added
-        """
-        self.notes.append(note)
-
-    @property
-    def __str__(self):
-        ret = "Solution: %s\t Score: %d\t\n", self.solution, self.score
-        ret += "\n".join(self.notes)
-        return ret
 
 
 def main():
     # Parse commandline arguments
     parser = argparse.ArgumentParser(description='Cryptic crossword solver.')
-    parser.add_argument('integers', metavar='N', type=int, nargs='+',
-                        help='an integer for the accumulator')
-    parser.add_argument('--sum', dest='accumulate', action='store_const',
-                        const=sum, default=max,
-                        help='sum the integers (default: find the max)')
+    parser.add_argument("-l", "--logging", type=str, default="INFO",
+                        help='Verbosity logging ')
 
     args = parser.parse_args()
 
+    logging_level = getattr(logging, args.logging.upper())
+    if not isinstance(logging_level, int):
+        raise ValueError('Invalid log level: %s' % args.logging)
+    logging.basicConfig(level=logging_level)
+    logging.info("Setting verbosity to " + str(args.logging))
+
     # Generate solvers. todo: consider a configuration file
-    anagram_solver = AnagramSolver(anagram_indicator_file,
-                                   anagram_database_file)
+    anagrammer = Anagrammer(anagram_database_file)
+    anagram_solver = AnagramSolver(anagram_indicator_file, anagrammer)
+
     while True:
         line = raw_input()
-        clue = clue.Clue(line)
-        solns = anagram_solver.getAnagramSolutions(clue)
+        clue = Clue(line)
+        solns = anagram_solver.get_anagram_solutions(clue)
         print "possible solutions:"
-        for soln in sorted(set(solns)):
-            print soln
+        # todo: get rid of duplicates
+        for soln in solns:
+            print str(soln) + "\n"
 
 
 main()
