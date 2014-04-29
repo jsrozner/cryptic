@@ -6,3 +6,7 @@ WHAT I'VE DONE
 
 REQUIREMENTS
 	- download nltk corpuses
+
+- anagrams
+	- initially tried permuting and pycharm
+	- created database of anagrams instead using shelve
