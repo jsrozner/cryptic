@@ -1,0 +1,8 @@
+WHAT I'VE DONE
+
+- RESEARCH
+	- types of clues, considerations on solving them
+	- library searches, dictionary searches
+
+REQUIREMENTS
+	- download nltk corpuses

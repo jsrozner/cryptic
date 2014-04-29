@@ -1,0 +1,153 @@
+2.7 over 3.3 because of nltk support
+
+smart: add to dictionary of possible change words, e.g.
+
+QUESTIONS
+	- semantic concerns
+
+BASIC
+	- flags
+		- depth of similarity search
+		- should remove indicator
+		- UK / US
+		- require "!", "?" indicators, i.e. try full definition for "!"
+
+	- code. requires clue and length (in parens), new line
+
+GENERAL
+	- search for meanings on either side of clue
+
+NEED
+	- indicate probable definition side (or just execute over both)
+
+SIMPLICATIONS
+	- single first leter
+	- rearrangements (anagram indicator)
+	- remove (apostrophe s), other punctuation
+	- find synonyms
+
+DICTIONARIES
+	- map words / phrases to
+		1) anagram clues (simple words)
+		2) positional words (could be an anagram)
+			- charade positionals
+		3) container words
+		4) deletion / subtraction words (note deletion position)
+
+	- phrase lookup?
+
+SCORES
+	- indicator at begin or end => defition at opposite end
+
+REPRESENTATIONS
+	- input clue mapped to word array
+	- transform to object
+		- word array
+		- notes
+	- parse out indicators and add to notes
+		- execute synonym searches to yield a term array, where each term has many things
+	- keep full string less punctuation for hidden search
+	- possible solutions with scores
+
+ANAGRAMS (2)
+	- dict: change words (dynamically modify this)
+		- machine learn based on frequency of correctness
+
+	- more complex
+		- indirect anagrams (clue => new word => anagram)
+		- abbreviated / single letters
+
+	- ideas:
+		1) does anagram cluing word exist?
+		2) remove that word
+		3) parse a definition, rearrange words
+		4) see if any defiitons correspond to anagrams
+
+CHARADE (3-4)
+	- dict: charade positionals
+
+	- more complex: single letters
+
+	- ideas:
+		1) look for positional indicator, remove if exists
+		2) try near synonyms
+		3) combine valid numerical combos
+		4) see if any are words
+		5) see if any are defined as remaining words
+
+CONTAINERS (3-4)
+	- dict: container indicators
+
+	- more complex: single letters
+
+	ideas:
+		1) look for container indicators, remove if exists
+		2) try lookup
+		3) try container substitution (or just do an anagram iteration)
+		4) look for definition match
+
+DELETIONS (4)
+	- dict: deletion indicators
+
+	- ideas:
+		1) look for indicator, remove
+		2) get synonyms
+		3) apply subtraction
+		4) check matches
+
+DOUBLE DEF (1-2)
+	- lack indicators (except maybe "or")
+
+HIDDEN (1-2)
+	- dict: hidden indicators
+
+	- ideas:
+		1) simple lengthwise pass through clue
+		2) parse out indicator words
+
+	- complex:
+		1) first letters
+		2) capitalization as indicator
+		3) multiple indicators
+		4) odd letters
+
+HOMOPHONES (1-2)
+	- dict: homophones, homophone indicators
+
+	- ideas: 
+		1) parse indicator
+		2) synonyms
+		3) homophone indicated word
+		4) check def
+
+	- more complex: middle words (take longer one)
+
+REVERSALS (1-2)
+	dict: reversal indicators
+
+	- ideas: parse indicators
+		2) synonyms
+		3) reverse
+		4) check
+
+CRYPTIC (4-5)
+	see examples
+	sometimes denoted by question mark
+
+SPOONERISMS (4)
+	spooner indicators
+
+	1) spooner indicaotr
+	2) synonyms
+	3) swap consonants/ syllables
+
+&LIT (4)
+	indicators: "!"
+
+	def is whole clue
+
+
+COMBINATIONS
+
+
+
