@@ -17,8 +17,12 @@ anagram_database_file = "data/anagrams.db"
 def main():
     # Parse commandline arguments
     parser = argparse.ArgumentParser(description='Cryptic crossword solver.')
-    parser.add_argument("-l", "--logging", type=str, default="INFO",
+    parser.add_argument("-v", "--logging", type=str, default="INFO",
                         help='Verbosity logging ')
+    parser.add_argument("--no-solution-breakdown",
+                        help="Print only solution words with no explanation.")
+    parser.add_argumetn("--num-solns", type=int, default=10,
+                        help="Number of solutions to show.")
 
     args = parser.parse_args()
 
@@ -46,8 +50,11 @@ def main():
         print "possible solutions:"
         # todo: get rid of duplicates?
         # scale relative anagramers
-        for soln in sorted(solns):
-            print str(soln) + "\n"
+        for soln in sorted(solns)[-args.num_solns:]:
+            if args.no_solution_breakdown:
+                print soln.solution + "\n"
+            else:
+                print str(soln) + "\n"
 
 
 main()

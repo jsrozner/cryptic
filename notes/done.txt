@@ -10,3 +10,6 @@ REQUIREMENTS
 - anagrams
 	- initially tried permuting and pycharm
 	- created database of anagrams instead using shelve
+
+- scraped a bunch of puzzles
+	- calibrated tests
