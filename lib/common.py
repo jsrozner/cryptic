@@ -102,4 +102,3 @@ def compare_related_words(tup1, tup2):
             score += 1.0 / ((2 << first_mux) * second_mux) * len(syn_defs)
 
     return score
-

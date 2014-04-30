@@ -2,7 +2,16 @@ ANAGRAMS
 	- todo: positional words
 	- todo: indirect anagrams
 
+	- chaperone shredded corset not working
+		- debugging output on matched terms
+
 HIDDEN
 	- way too many results
 	- words like "ochre" not in dictionary
-	- could partial word matches from the start of a word be valid
+	- could partial word matches from the start of a word be valid)
+
+
+------
+
+DOUBLE
+	- implement cross-lookup to return the same terms that were matched

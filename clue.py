@@ -54,18 +54,28 @@ class Clue:
         self.word_lengths = map(len, clueWords)
         self.terms = map(Term, clueWords)
 
-    def check_definition(self, soln, omit=[]):
+    def check_definition(self, soln, omit=[], split_in_half=True):
         depth = 2
         soln_words = common.get_related_words(soln, depth)
 
+        last = len(self.terms) - 1
+        omit = sorted(set(omit))
+
+        term_range = range(0, last) #default
+        if omit and split_in_half:
+            if 0 in omit and last in omit:
+                return 0.0
+            elif 0 in omit:
+                term_range = range(omit[-1] + 1, last + 1)
+            elif last in omit:
+                term_range = range(0, omit[0])
+
         score = 0.0
-        terms_compared = 0
-        for i in range (0, len(self.terms)):
-            if i in omit:
-                continue
-            terms_compared += 1
+        terms_counted = 0
+        for i in term_range:
+            terms_counted += 1
             term = self.terms[i]
             score += common.compare_related_words(term.related_words, soln_words)
 
-        return score / terms_compared
+        return score / terms_counted
 
