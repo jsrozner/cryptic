@@ -5,4 +5,4 @@ ANAGRAMS
 HIDDEN
 	- way too many results
 	- words like "ochre" not in dictionary
-	- ignore exact word matches
+	- could partial word matches from the start of a word be valid

@@ -45,7 +45,6 @@ class HiddenSolver(IndicatorSolver):
                 for (indices, word) in hidden_words:
                     logging.info('Checking hidden word ' + word)
                     omit = indices + [i]
-                    print "for word " + word+  " , omitting " + str(omit)
                     score = clue.check_definition(word, omit)
                     if score > 0.0:
                         soln = Solution(word, score, clue_type=self.type,
@@ -71,6 +70,9 @@ class HiddenSolver(IndicatorSolver):
         for i in range(0, len(full_string) - clue.answer_length):
             letters = full_string[i:i + clue.answer_length]
             if self.anagrammer.isWord(letters):
+                # ignore exact word matches
+                if i in pos_map.keys():
+                    continue
                 left_pos = bisect_right(pos_map.keys(), i)
                 if left_pos == len(pos_map.keys()) or pos_map.keys()[left_pos] != i:
                     left_pos -= 1
