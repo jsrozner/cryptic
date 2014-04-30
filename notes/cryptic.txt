@@ -1,9 +1,7 @@
 2.7 over 3.3 because of nltk support
 
-smart: add to dictionary of possible change words, e.g.
-
-QUESTIONS
-	- semantic concerns
+FUTURE
+	smart: machine learning with scoring and indicator words
 
 BASIC
 	- flags
@@ -14,11 +12,20 @@ BASIC
 
 	- code. requires clue and length (in parens), new line
 
-GENERAL
-	- search for meanings on either side of clue
+TODO
+	- defintion matching
+		- search for meanings on either side of clue (pick one as more probable)
+		- improve word omission technique
 
-NEED
-	- indicate probable definition side (or just execute over both)
+	- solution info
+		- debug output definition search
+		- solution note - which word was matched
+
+	- test files -> clues and top solutions (score the whole solver)
+
+	- flags: allow file as input
+
+	- use dictionary, not anagram database
 
 SIMPLICATIONS
 	- single first leter

@@ -1,8 +1,11 @@
-from common import IndicatorDictionary
 from enum import Enum
+
+from lib.common import IndicatorDictionary
+
 
 class IndicatorType(Enum):
     anagram = 1
+    hidden = 2
 
 class IndicatorSolver(object):
     """ Base class for indicator solvers

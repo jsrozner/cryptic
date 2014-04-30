@@ -1,7 +1,7 @@
 import logging
 
-from solver import IndicatorSolver
-from solver import IndicatorType
+from solvers.solver import IndicatorSolver
+from solvers.solver import IndicatorType
 from solution import Solution
 
 
@@ -20,7 +20,7 @@ class AnagramSolver(IndicatorSolver):
                                  anagrammer=anagrammer)
         logging.info("Initializing anagram solver")
 
-    def get_anagram_solutions(self, clue):
+    def get_solutions(self, clue):
         """ Get possible anagram type solutions to clue
 
 
@@ -47,7 +47,7 @@ class AnagramSolver(IndicatorSolver):
                         already_permuted.add("".join(sorted(letter_set)))
 
                     logging.info("Permuting " + letter_set)
-                    anagrams = self.anagrammer.getAnagrams(letter_set)
+                    anagrams = self.anagrammer.get_anagrams(letter_set)
                     logging.info("Valid anagrams: " + str(anagrams))
                     for a in anagrams:
                         exclude = indices + [i]

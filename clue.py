@@ -1,6 +1,8 @@
-import common
-import mystring
 import logging
+
+from lib import common, mystring
+
+#todo: fix commenting in this file
 '''
 isuppercase: whether term was initially uppercased
 word: the actual lowercased word
@@ -52,7 +54,7 @@ class Clue:
         self.word_lengths = map(len, clueWords)
         self.terms = map(Term, clueWords)
 
-    def check_definition(self, soln, omit):
+    def check_definition(self, soln, omit=[]):
         depth = 2
         soln_words = common.get_related_words(soln, depth)
 

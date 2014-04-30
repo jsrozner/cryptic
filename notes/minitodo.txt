@@ -1,0 +1,7 @@
+ANAGRAMS
+	- todo: positional words
+	- todo: indirect anagrams
+
+HIDDEN
+	- way too many results
+	- words like "ochre" not in dictionary

@@ -1,0 +1,6 @@
+PAPER
+
+	- scoring technique
+	- indicators
+	- clue / term representation
+	- solution representation
