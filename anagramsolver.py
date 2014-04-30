@@ -30,20 +30,28 @@ class AnagramSolver(IndicatorSolver):
         """
         logging.info("Getting anagram solutions")
         solns = []
+        already_permuted = set([])
 
-        for term in clue.terms:
+        for i in range(0, len(clue.terms)):
+            term = clue.terms[i]
             logging.debug("Looking for matching indicator: " + term.word)
             if self.indicators.lookup(term.word) is not None:
                 logging.info("Got indicator: " + term.word)
 
                 letter_sets_to_permute = self.get_valid_length_combos(clue)
 
-                for letter_set in letter_sets_to_permute:
+                for (indices, letter_set) in letter_sets_to_permute:
+                    if letter_set in already_permuted:
+                        continue
+                    else:
+                        already_permuted.add("".join(sorted(letter_set)))
+
                     logging.info("Permuting " + letter_set)
                     anagrams = self.anagrammer.getAnagrams(letter_set)
                     logging.info("Valid anagrams: " + str(anagrams))
                     for a in anagrams:
-                        score = clue.check_definition(a)
+                        exclude = indices + [i]
+                        score = clue.check_definition(a, exclude)
                         if score > 0.0:
                             soln =  Solution(a, score, clue_type=self.type,
                                              indicator=term.word)
@@ -77,9 +85,10 @@ class AnagramSolver(IndicatorSolver):
         letter_sets = []
 
         for pos in single_word_indices:
-            letter_sets.append(clue.terms[pos].word)
+            letter_sets.append(([pos], clue.terms[pos].word))
         for pos in double_word_indices:
-            letter_sets.append(clue.terms[pos].word + clue.terms[pos + 1].word)
+            letter_sets.append(([pos, pos + 1],
+                                clue.terms[pos].word + clue.terms[pos + 1].word))
 
         return letter_sets
 

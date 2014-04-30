@@ -18,11 +18,9 @@ class Term:
         self.word = input.lower()
 
         depth = 2
-        related_words = common.getRelatedWords(self.word, True, depth)
+        self.related_words = common.get_related_words(self.word, depth)
         logging.debug("Words related to " + self.word + " with depth " +
-                      str(depth) + str(related_words))
-        self.allDefinitions = \
-            common.IndicatorDictionary(sorted(set(related_words)))
+                      str(depth))
 
 
 ''' original clue
@@ -54,14 +52,15 @@ class Clue:
         self.word_lengths = map(len, clueWords)
         self.terms = map(Term, clueWords)
 
-    def check_definition(self, possible_solution):
-        related_words = common.getRelatedWords(possible_solution, True, 2)
-        for term in self.terms:
-            if term.allDefinitions.lookup(possible_solution) is not None:
-                return 1.0
+    def check_definition(self, soln, omit):
+        depth = 2
+        soln_words = common.get_related_words(soln, depth)
 
-        for word in related_words:
-            if term.allDefinitions.lookup(word) is not None:
-                return 0.5
+        score = 0.0
+        for i in range (0, len(self.terms)):
+            if i in omit:
+                continue
+            term = self.terms[i]
+            score += common.compare_related_words(term.related_words, soln_words)
 
-        return -1.0
+        return score

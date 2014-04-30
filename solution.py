@@ -34,3 +34,6 @@ class Solution(object):
         ret = "Solution: " + self.solution + "\t Score: " + str(self.score) + "\t\n"
         ret += "\n".join(self.notes)
         return ret
+
+    def __cmp__(self, other):
+        return cmp(self.score, other.score)

@@ -10,8 +10,6 @@ anagram_indicator_file = "data/anagram.txt"
 anagram_database_file = "data/anagrams.db"
 
 
-
-
 def main():
     # Parse commandline arguments
     parser = argparse.ArgumentParser(description='Cryptic crossword solver.')
@@ -36,7 +34,7 @@ def main():
         solns = anagram_solver.get_anagram_solutions(clue)
         print "possible solutions:"
         # todo: get rid of duplicates
-        for soln in solns:
+        for soln in sorted(solns)[-2:]:
             print str(soln) + "\n"
 
 

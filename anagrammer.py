@@ -10,9 +10,12 @@ class Anagrammer(object):
             logging.exception("Failed to open anagram database")
             self.db = None
 
-    def getAnagrams(self, lookup):
-        lookup = "".join(sorted(lookup))
+    def getAnagrams(self, letters):
+        lookup = "".join(sorted(letters))
         if lookup in self.db:
-            return self.db[lookup]
+            temp = self.db[lookup]
+            if letters in temp:
+                temp.remove(letters)
+            return temp
         else:
             return []
