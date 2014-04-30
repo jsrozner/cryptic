@@ -59,10 +59,13 @@ class Clue:
         soln_words = common.get_related_words(soln, depth)
 
         score = 0.0
+        terms_compared = 0
         for i in range (0, len(self.terms)):
             if i in omit:
                 continue
+            terms_compared += 1
             term = self.terms[i]
             score += common.compare_related_words(term.related_words, soln_words)
 
-        return score
+        return score / terms_compared
+
