@@ -17,7 +17,6 @@ class Anagrammer(object):
         else:
             return []
 
-
     def get_anagrams(self, letters):
         results = self.look_up(letters)
 
@@ -26,7 +25,7 @@ class Anagrammer(object):
             results.remove(letters)
         return results
 
-    def isWord(self, word):
+    def is_word(self, word):
         results = self.look_up(word)
         if word in results:
             return True

@@ -2,9 +2,10 @@ import argparse
 import logging
 
 from anagrammer import Anagrammer
+from clue import Clue
 from solvers.anagramsolver import AnagramSolver
 from solvers.hiddensolver import HiddenSolver
-from clue import Clue
+from thesaurus import Thesaurus
 
 
 # corpuses
@@ -21,7 +22,7 @@ def main():
                         help='Verbosity logging ')
     parser.add_argument("--no-solution-breakdown",
                         help="Print only solution words with no explanation.")
-    parser.add_argumetn("--num-solns", type=int, default=10,
+    parser.add_argument("--num-solns", type=int, default=10,
                         help="Number of solutions to show.")
 
     args = parser.parse_args()

@@ -1,7 +1,10 @@
+from bisect import bisect_left
+from difflib import get_close_matches
 from enum import Enum
 
-from lib.common import IndicatorDictionary
+import logging
 
+min_indicator_distance = 0.65
 
 class IndicatorType(Enum):
     anagram = 1
@@ -20,7 +23,34 @@ class IndicatorSolver(object):
         :param indicator_file:
         :param anagrammer:
         :param type: IndicatorType
+        :type anagrammer: anagrammer.Anagrammer
         """
         self.type = type
         self.indicators = IndicatorDictionary(indicator_file)
         self.anagrammer = anagrammer
+
+
+class IndicatorDictionary:
+    def __init__(self, indicator_file):
+        """
+        :type indicator_file: str
+        """
+        with open(indicator_file) as f:
+            self.dict = [x.strip() for x in f.readlines()]
+        logging.info("Opened indicator file %s" % indicator_file)
+
+    def lookup(self, word):
+        """ Get closest match to word (accepts imperfect matches)
+
+        :param word: word to check in indicator dictionary
+        :type word: str
+        :return: closest match or None if none found
+        :rtype: str
+        """
+        i = bisect_left(self.dict, word)
+        match = get_close_matches(word, self.dict[i - 1:i + 1], n=1,
+                                  cutoff=min_indicator_distance)
+        if match:
+            return match[0]
+        else:
+            return None

@@ -69,7 +69,7 @@ class HiddenSolver(IndicatorSolver):
 
         for i in range(0, len(full_string) - clue.answer_length):
             letters = full_string[i:i + clue.answer_length]
-            if self.anagrammer.isWord(letters):
+            if self.anagrammer.is_word(letters):
                 # ignore exact word matches
                 if i in pos_map.keys():
                     continue
