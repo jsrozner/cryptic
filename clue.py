@@ -116,6 +116,6 @@ class Clue:
                                                   soln_words)
             syn_score += common.compare_syns(term.syns, soln_syns)
 
-        print "wn_score: " + str(wn_score)
-        print "syn_score: " + str(syn_score)
+        logging.info("wn_score: " + str(wn_score))
+        logging.info("syn_score: " + str(syn_score))
         return syn_score / len(term_range)

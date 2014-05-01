@@ -61,7 +61,5 @@ class DoubleSolver(IndicatorSolver):
                 solns.append(Solution(word, score,
                                       clue_type=self.type))
 
-
-
         return solns
 
