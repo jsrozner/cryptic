@@ -1,17 +1,22 @@
-ANAGRAMS
-	- todo: positional words
+ANAGRAMS (2)
 	- todo: indirect anagrams
+	- todo: abbreviated / single letters
 
-	- chaperone shredded corset not working
-		- debugging output on matched terms
+	- terribly alert at some time in the future not working
+	- debugging output on matched terms
+
+	- consider: optimize and don't consider all possible word comboes
 
 HIDDEN
 	- way too many results
 	- words like "ochre" not in dictionary
 	- could partial word matches from the start of a word be valid)
 
+solutions: don't repeat same soln with diff indicator (take best soln of a given word)
 
 ------
 
 DOUBLE
 	- implement cross-lookup to return the same terms that were matched
+
+

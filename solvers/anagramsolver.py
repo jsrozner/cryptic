@@ -23,7 +23,6 @@ class AnagramSolver(IndicatorSolver):
     def get_solutions(self, clue):
         """ Get possible anagram type solutions to clue
 
-
         :rtype : list main.Solution
         :param clue: Clue to handle
         :return: List of solutions
@@ -32,37 +31,42 @@ class AnagramSolver(IndicatorSolver):
         solns = []
         already_permuted = set([])
 
+        indicator_positions = []
         for i in range(0, len(clue.terms)):
             term = clue.terms[i]
             logging.debug("Looking for matching indicator: " + term.word)
             if self.indicators.lookup(term.word) is not None:
                 logging.info("Got indicator: " + term.word)
+                indicator_positions.append(i)
 
-                letter_sets_to_permute = self.get_valid_length_combos(clue)
+        # only check for valid subsets once
+        if indicator_positions:
+            letter_sets_to_permute = self.get_valid_length_combos(clue)
+            logging.debug(str(letter_sets_to_permute))
 
-                for (indices, letter_set) in letter_sets_to_permute:
-                    if letter_set in already_permuted:
-                        continue
-                    else:
-                        already_permuted.add("".join(sorted(letter_set)))
+            for (indices, letter_set) in letter_sets_to_permute:
+                if letter_set in already_permuted:
+                    continue
+                else:
+                    already_permuted.add("".join(sorted(letter_set)))
 
-                    logging.info("Permuting " + letter_set)
-                    anagrams = self.anagrammer.get_anagrams(letter_set)
-                    logging.info("Valid anagrams: " + str(anagrams))
+                logging.info("Permuting " + letter_set)
+                anagrams = self.anagrammer.get_anagrams(letter_set)
+                logging.info("Valid anagrams: " + str(anagrams))
+
+                #todo: consider not having first for loop
+                for indicator_pos in indicator_positions:
                     for a in anagrams:
-                        exclude = indices + [i]
+                        exclude = indices + [indicator_pos]
                         score = clue.check_definition(a, exclude)
                         if score > 0.0:
                             soln =  Solution(a, score, clue_type=self.type,
-                                             indicator=term.word)
+                                             indicator=clue.terms[indicator_pos].word)
                             soln.add_note("Anagrammed from " + letter_set)
                             solns.append(soln)
 
         return solns
 
-    # todo: this function should pop out things like "with"
-    # todo: handles only two word combos
-    # todo: handle other comboes (remove clue word, parse "with", 3 words)
     # todo handle abbreviations
     def get_valid_length_combos(self, clue):
         """
@@ -71,24 +75,27 @@ class AnagramSolver(IndicatorSolver):
         """
         word_lengths = clue.word_lengths
         goal_length = clue.answer_length
-        single_word_indices = []
-        double_word_indices = []
 
-        # Look over pairs of words only
-        for i in range(0, len(word_lengths)):
-            if (word_lengths[i] == goal_length):
-                single_word_indices.append(i)
-            elif i < len(word_lengths) - 1 \
-                and word_lengths[i] + word_lengths[i + 1] == goal_length:
-                double_word_indices.append(i)
+        valid_subsets = self.get_subsets(0, goal_length, 0, word_lengths)
 
         letter_sets = []
 
-        for pos in single_word_indices:
-            letter_sets.append(([pos], clue.terms[pos].word))
-        for pos in double_word_indices:
-            letter_sets.append(([pos, pos + 1],
-                                clue.terms[pos].word + clue.terms[pos + 1].word))
+        for index_set in valid_subsets:
+            letter_set = ""
+            for index in index_set:
+                letter_set += clue.terms[index].word
+            letter_sets.append((index_set, letter_set))
 
         return letter_sets
 
+    def get_subsets(self, curr_len, goal_len, index, word_lengths):
+        all = []
+        for i in range(index, len(word_lengths)):
+            word_len = word_lengths[i]
+            if curr_len + word_len == goal_len:
+                all.append([i])
+            elif curr_len + word_len < goal_len:
+                rest = self.get_subsets(curr_len + word_len, goal_len, i + 1, word_lengths)
+                for set in rest:
+                    all.append([i] + set)
+        return all

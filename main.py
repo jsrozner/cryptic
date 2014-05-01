@@ -60,7 +60,7 @@ def main():
     # Parse commandline arguments
     arg_parser = argparse.ArgumentParser(
         description='Cryptic crossword solver.')
-    arg_parser.add_argument("-v", "--logging", type=str, default="INFO",
+    arg_parser.add_argument("-v", "--logging", type=str, default="DEBUG",
                             help='Verbosity logging ')
     arg_parser.add_argument("--no-solution-breakdown", action="store_true",
                             help="Print only solution words with no explanation.")
