@@ -42,6 +42,7 @@ class Clue:
         word_lengths: lengths of all words in the clue after stripping
             punctuation
         terms: components of clue as clue.Term
+        clue_words: components of clue as strings
         ends_with_question: if clue originally ended with question mark
         ends_with_exclamation: if clue originally ended with exclamation mark
 
@@ -74,6 +75,7 @@ class Clue:
             return
 
         clue_words = clue_words[0:-1]  # strip out length
+        self.clue_words = clue_words
         self.word_lengths = map(len, clue_words)
         self.terms = map(Term, clue_words)
 
@@ -107,6 +109,7 @@ class Clue:
 
         wn_score = 0.0
         syn_score = 0.0
+        #todo: take some combination of the two scores
         for i in term_range:
             term = self.terms[i]
             wn_score += common.compare_related_words(term.related_words,

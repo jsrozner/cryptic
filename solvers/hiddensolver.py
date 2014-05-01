@@ -23,7 +23,7 @@ class HiddenSolver(IndicatorSolver):
         logging.info("Initializing hidden solver")
 
     def get_solutions(self, clue):
-        """ Get possible anagram type solutions to clue
+        """ Get possible hidden type solutions to clue
 
 
         :type clue: clue.Clue

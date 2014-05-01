@@ -4,6 +4,7 @@ import logging
 from anagrammer import Anagrammer
 from clue import Clue
 from solvers.anagramsolver import AnagramSolver
+from solvers.doublesolver import DoubleSolver
 from solvers.hiddensolver import HiddenSolver
 from thesaurus import Thesaurus
 
@@ -37,9 +38,11 @@ def main():
     anagrammer = Anagrammer(anagram_database_file)
 
     anagram_solver = AnagramSolver(anagram_indicator_file, anagrammer)
+    double_solver = DoubleSolver()
     hidden_solver = HiddenSolver(hidden_indicator_file, anagrammer)
 
     solvers = [anagram_solver, hidden_solver]
+    aux_solvers = [double_solver]
 
     while True:
         line = raw_input()
@@ -48,6 +51,11 @@ def main():
 
         for s in solvers:
             solns += s.get_solutions(clue)
+        solns = sorted(solns)
+        # todo: arbitrary cutoff
+        if not solns or solns[-1].score < 100.0:       # run secondary, expensive solvers
+            for s in aux_solvers:
+                solns += s.get_solutions(clue)
         print "possible solutions:"
         # todo: get rid of duplicates?
         # scale relative anagramers

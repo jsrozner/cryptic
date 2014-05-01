@@ -4,3 +4,9 @@ PAPER
 	- indicators
 	- clue / term representation
 	- solution representation
+
+	- definition matching
+		- omit certain words, find longest from one end
+
+FUTURE
+	- machine learn

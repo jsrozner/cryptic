@@ -76,6 +76,23 @@ def compare_related_words(tup1, tup2):
 
     return score
 
+def get_syn_intersection(syns1, syns2):
+    '''d = dict()
+    for i in range(0, len(syns1)):
+        for j in range(0, len(syns2)):
+            same_syns = syns1[i].intersection(syns2[j])
+            key = i + j
+            if key in d:
+                temp = d[key]
+                temp = temp.union(same_syns)
+                d[key] = temp
+            else:
+                d[key] = same_syns
+
+    '''
+    return syns1.intersection(syns2)
+
+
 def compare_syns(syns1, syns2):
     score = 0.0
     for i in range(0, len(syns1)):

@@ -8,7 +8,8 @@ min_indicator_distance = 0.65
 
 class IndicatorType(Enum):
     anagram = 1
-    hidden = 2
+    double = 2
+    hidden = 3
 
 class IndicatorSolver(object):
     """ Base class for indicator solvers
@@ -26,7 +27,10 @@ class IndicatorSolver(object):
         :type anagrammer: anagrammer.Anagrammer
         """
         self.type = type
-        self.indicators = IndicatorDictionary(indicator_file)
+        if indicator_file != "":
+            self.indicators = IndicatorDictionary(indicator_file)
+        else:
+            self.indcators = None
         self.anagrammer = anagrammer
 
 

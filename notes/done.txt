@@ -13,3 +13,15 @@ REQUIREMENTS
 
 - scraped a bunch of puzzles
 	- calibrated tests
+
+- database from giant thesaurus
+
+REPRESENTATIONS
+	- input clue mapped to word array
+	- transform to object
+		- word array
+		- notes
+	- parse out indicators and add to notes
+		- execute synonym searches to yield a term array, where each term has many things
+	- keep full string less punctuation for hidden search
+	- possible solutions with scores
