@@ -91,14 +91,14 @@ class AnagramSolver(IndicatorSolver):
         return letter_sets
 
     def get_subsets(self, curr_len, goal_len, index, word_lengths):
-        all = []
+        subsets = []
         for i in range(index, len(word_lengths)):
             word_len = word_lengths[i]
             if curr_len + word_len == goal_len:
-                all.append([i])
+                subsets.append([i])
             elif curr_len + word_len < goal_len:
                 rest = self.get_subsets(curr_len + word_len, goal_len, i + 1,
                                         word_lengths)
-                for set in rest:
-                    all.append([i] + set)
-        return all
+                for s in rest:
+                    subsets.append([i] + s)
+        return subsets

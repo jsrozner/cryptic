@@ -58,7 +58,7 @@ class Thesaurus(object):
         """
         return sorted(set(self.thes_look_up(word) + self.back_look_up(word)))
 
-    def get_all_synonyms(self, word, depth=1):
+    def get_all_synonyms(self, word, depth=2):
         """ Get all syns of a word up to depth
 
         :param str word:
@@ -69,13 +69,15 @@ class Thesaurus(object):
         word = word.lower()  # this is probably unnecessary
 
         syns = []
-        all_syns = set(word)
+        all_syns = set([word])
         syns.append(all_syns)  # all_syns[0] = word
 
         for i in range(1, depth):
             new_syns = []
             for syn in syns[i - 1]:
-                new_syns += self.__internal_get_all_synonyms(syn)
+                new_syns += self.thes_look_up(syn)
+                # todo: maybe only do back look up if nothing returned from forward
+                new_syns += self.back_look_up(syn)
 
             new_syns = set(new_syns).difference(all_syns)  # don't repeat syns
             syns.append(new_syns)  # syns[i]

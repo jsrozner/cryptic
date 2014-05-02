@@ -1,7 +1,6 @@
 import logging
 
 from lib import common, mystring
-from main import cmd_line_args
 from thesaurus import thesaurus
 
 
@@ -29,6 +28,7 @@ class Term:
                       str(depth))
         self.related_words = common.get_wn_related_words(self.word, depth)
         self.syns = thesaurus.get_all_synonyms(self.word, depth)
+        logging.debug(self.syns)
 
 
 class Clue:
@@ -110,8 +110,5 @@ class Clue:
 
         logging.info("wn_score: " + str(wn_score))
         logging.info("syn_score: " + str(syn_score))
-        if cmd_line_args.use_wn:
-            return wn_score / len(term_range)
-        else:
-            return syn_score / len(term_range)
-
+        # todo: check cmd line arg
+        return syn_score / len(term_range)

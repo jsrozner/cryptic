@@ -4,6 +4,7 @@ import re
 
 from anagrammer import Anagrammer
 from clue import Clue
+from lib import mystring
 from solvers.anagramsolver import AnagramSolver
 from solvers.doublesolver import DoubleSolver
 from solvers.hiddensolver import HiddenSolver
@@ -62,7 +63,7 @@ class Parser(object):
         clue_words = split.group(1).strip()
         answer_length = split.group(2)
         try:
-            answer_length = int(answer_length)
+            answer_length = int(mystring.strip_punctuation(answer_length))
         except ValueError:
             logging.warning("No answer length given for clue")
             return []
@@ -73,7 +74,7 @@ class Parser(object):
         for s in self.solvers:
             logging.info("Running " + str(s))
             new_solns = s.get_solutions(clue)
-            logging.info(str(s) + "got " + str(len(new_solns)) + " solutions")
+            logging.info(str(s) + " got " + str(len(new_solns)) + " solutions")
             solns += new_solns
         solns = sorted(solns)
 
@@ -84,13 +85,13 @@ class Parser(object):
             for s in self.aux_solvers:
                 logging.info("Running " + str(s))
                 new_solns = s.get_solutions(clue)
-                logging.info(str(s) + "got " + str(len(new_solns)) + " solns")
+                logging.info(str(s) + " got " + str(len(new_solns)) + " solns")
                 solns += new_solns
         solns = sorted(solns)
 
         # todo: get rid of duplicates?
         # todo: scale relative anagramers
-        ret = sorted(solns)[cmd_line_args.num_solns:]
+        ret = sorted(solns)[-cmd_line_args.num_solns:]
         if print_solns:
             for soln in ret:
                 if cmd_line_args.no_solution_breakdown:
@@ -103,8 +104,7 @@ class Parser(object):
 
 def main():
     # Parse commandline arguments
-    arg_parser = argparse.ArgumentParser(
-        description='Cryptic crossword solver.')
+    arg_parser = argparse.ArgumentParser(description='Cryptic crossword solver.')
     arg_parser.add_argument("-v", "--logging", type=str, default="DEBUG",
                             help='Verbosity logging ')
     arg_parser.add_argument("--no-solution-breakdown", action="store_true",
