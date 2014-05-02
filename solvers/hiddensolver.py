@@ -11,6 +11,7 @@ class HiddenSolver(IndicatorSolver):
     """ A solver for hidden  type clues.
 
     """
+
     def __init__(self, indicator_file, anagrammer):
         """
         :type anagrammer: anagrammer.Anagrammer
@@ -59,7 +60,7 @@ class HiddenSolver(IndicatorSolver):
         full_string = ""
         length = 0
         pos_map = OrderedDict()
-        for i in range (0, len(clue.terms)):
+        for i in range(0, len(clue.terms)):
             word = clue.terms[i].word
             pos_map[length] = i
             full_string += word
@@ -74,10 +75,13 @@ class HiddenSolver(IndicatorSolver):
                 if i in pos_map.keys():
                     continue
                 left_pos = bisect_right(pos_map.keys(), i)
-                if left_pos == len(pos_map.keys()) or pos_map.keys()[left_pos] != i:
+                if left_pos == len(pos_map.keys()) or pos_map.keys()[
+                    left_pos] != i:
                     left_pos -= 1
-                right_pos = bisect_right(pos_map.keys(), i + clue.answer_length - 1)
-                if right_pos == len(pos_map.keys()) or pos_map.keys()[right_pos] != i + clue.answer_length - 1:
+                right_pos = bisect_right(pos_map.keys(),
+                                         i + clue.answer_length - 1)
+                if right_pos == len(pos_map.keys()) or pos_map.keys()[
+                    right_pos] != i + clue.answer_length - 1:
                     right_pos -= 1
                 indices = [left_pos, right_pos]
                 valid_hidden_words.append((indices, letters))

@@ -1,7 +1,12 @@
 import logging
 
 from lib import common, mystring
+from main import cmd_line_args
 from thesaurus import thesaurus
+
+
+# How deep to search in wordnet and thesaurus
+related_word_depth = 2
 
 
 class Term:
@@ -10,27 +15,20 @@ class Term:
     Attributes:
         is_upper_case: whether term initially started with upper case letter
         word: actual lower-cased word
-        related_words: tuple of (syns, defs)
-    
+        related_words: tuple of (syns, defs). syns and defs are both arrays
     """
-
     def __init__(self, word):
         """
-        :param word: The initial word of the clue
-        :type word: str
+        :param str word: The initial word of the clue
         """
-        if mystring.starts_with_upper_case(word):
-            self.is_upper_case = True
-        else:
-            self.is_upper_case = False
-
+        self.is_upper_case = mystring.starts_with_upper_case(word)
         self.word = word.lower()
 
-        depth = 2
-        self.related_words = common.get_related_words(self.word, depth)
-        self.syns = thesaurus.get_synonyms(self.word, depth)
-        logging.debug("Words related to " + self.word + " with depth " +
+        depth = related_word_depth
+        logging.debug("Getting words related to " + self.word + " with depth " +
                       str(depth))
+        self.related_words = common.get_wn_related_words(self.word, depth)
+        self.syns = thesaurus.get_all_synonyms(self.word, depth)
 
 
 class Clue:
@@ -47,75 +45,73 @@ class Clue:
         ends_with_exclamation: if clue originally ended with exclamation mark
 
     """
-    # flags
-
-    def __init__(self, input_clue):
+    def __init__(self, clue, answer_length):
         """
-
-        :type input_clue: str
+        :param str clue: input line
+        :param int answer_length: input length
         """
-        self.original_clue = input_clue
+        self.original_clue = clue
+        self.answer_length = answer_length
 
-        self.ends_with_question = False
-        self.ends_with_exclamation = False
-        if input_clue[-1] == "?":
-            self.ends_with_question = True
-        elif input_clue[-1] == "!":
-            self.ends_with_exclation = True
+        self.ends_with_question = clue[-1] == "?"
+        self.ends_with_exclamation = clue[-1] == "!"
+        logging.debug("Clue ends with question: " +
+                      str(self.ends_with_question))
+        logging.debug("Clue ends with exclamation: " +
+                      str(self.ends_with_exclamation))
 
-        # todo: consider removing punctuation post separation
-        input_clue = mystring.strip_punctuation(input_clue)  # remove punctuation
-        clue_words = input_clue.split()
+        input_clue = mystring.strip_punctuation(clue)  # remove punctuation
+        self.clue_words = input_clue.split()
 
-        #todo: support (3,4) style
-        try:
-            self.answer_length = int(clue_words[-1])
-        except:
-            print("No length of input_clue given.")
-            return
+        self.word_lengths = map(len, self.clue_words)
+        self.terms = map(Term, self.clue_words)
 
-        clue_words = clue_words[0:-1]  # strip out length
-        self.clue_words = clue_words
-        self.word_lengths = map(len, clue_words)
-        self.terms = map(Term, clue_words)
-
-    def check_definition(self, soln, omit=[], split_in_half=True):
+    def check_definition(self, soln, omit=None, split_in_half=True):
         """ Get a score for similarity
 
-        :param soln: the tentative solution
-        :type soln: str
-        :param omit: indices of words in the clue to omit
-        :type omit: list[int]
-        :param split_in_half: whether to search only one side for definition
-        :type split_in_half: bool
+        :param str soln: the tentative solution
+        :param list[int] omit: indices of words in the clue to omit
+        :param bool split_in_half: whether to search only one side for defn
         :return: score
         :rtype: float
         """
-        depth = 2
-        soln_words = common.get_related_words(soln, depth)
-        soln_syns = thesaurus.get_synonyms(soln, depth)
+        logging.debug("Checking definition for soln: " + soln)
 
-        last = len(self.terms) - 1
-        omit = sorted(set(omit))
+        if omit is None:
+            omit = []
 
-        term_range = range(0, last)  # default
+        depth = related_word_depth
+        soln_words = common.get_wn_related_words(soln, depth)
+        soln_syns = thesaurus.get_all_synonyms(soln, depth)
+
+        last = len(self.terms) - 1  # index of last term
+        omit = sorted(set(omit))    # don't allow repeated values
+
+        term_range = range(0, last)  # default term range
+
+        # Take only one half of the clue if split_in_half is true
         if omit and split_in_half:
-            if 0 in omit and last in omit:
+            if 0 in omit and last in omit:  # both sides of clue are used
+                logging.debug("Both sides of clue are used. Score is 0.0")
                 return 0.0
             elif 0 in omit:
                 term_range = range(omit[-1] + 1, last + 1)
             elif last in omit:
                 term_range = range(0, omit[0])
 
+        #todo: take some combination of the two scores
         wn_score = 0.0
         syn_score = 0.0
-        #todo: take some combination of the two scores
         for i in term_range:
             term = self.terms[i]
-            wn_score += common.compare_related_words(term.related_words,
-                                                  soln_words)
+            wn_score += common.compare_wn_related_words(term.related_words,
+                                                        soln_words)
             syn_score += common.compare_syns(term.syns, soln_syns)
 
         logging.info("wn_score: " + str(wn_score))
         logging.info("syn_score: " + str(syn_score))
-        return syn_score / len(term_range)
+        if cmd_line_args.use_wn:
+            return wn_score / len(term_range)
+        else:
+            return syn_score / len(term_range)
+

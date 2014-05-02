@@ -1,18 +1,20 @@
+CODE
+	- unrevised
+		- solvers folder
+
+
 ANAGRAMS (2)
 	- todo: indirect anagrams
 	- todo: abbreviated / single letters
 
-	- terribly alert at some time in the future not working
-	- debugging output on matched terms
-
 	- consider: optimize and don't consider all possible word comboes
 
 HIDDEN
-	- way too many results
+	- too many results?
 	- words like "ochre" not in dictionary
-	- could partial word matches from the start of a word be valid)
 
 solutions: don't repeat same soln with diff indicator (take best soln of a given word)
+		- debugging output on matched terms
 
 ------
 

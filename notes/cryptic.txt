@@ -14,7 +14,6 @@ BASIC
 
 TODO
 	- defintion matching
-		- search for meanings on either side of clue (pick one as more probable)
 		- improve word omission technique
 
 	- solution info
@@ -34,41 +33,7 @@ SIMPLICATIONS
 	- find synonyms
 
 DICTIONARIES
-	- map words / phrases to
-		1) anagram clues (simple words)
-		2) positional words (could be an anagram)
-			- charade positionals
-		3) container words
-		4) deletion / subtraction words (note deletion position)
-
 	- phrase lookup?
-
-SCORES
-	- indicator at begin or end => defition at opposite end
-
-REPRESENTATIONS
-	- input clue mapped to word array
-	- transform to object
-		- word array
-		- notes
-	- parse out indicators and add to notes
-		- execute synonym searches to yield a term array, where each term has many things
-	- keep full string less punctuation for hidden search
-	- possible solutions with scores
-
-ANAGRAMS (2)
-	- dict: change words (dynamically modify this)
-		- machine learn based on frequency of correctness
-
-	- more complex
-		- indirect anagrams (clue => new word => anagram)
-		- abbreviated / single letters
-
-	- ideas:
-		1) does anagram cluing word exist?
-		2) remove that word
-		3) parse a definition, rearrange words
-		4) see if any defiitons correspond to anagrams
 
 CHARADE (3-4)
 	- dict: charade positionals
@@ -106,8 +71,6 @@ DOUBLE DEF (1-2)
 	- lack indicators (except maybe "or")
 
 HIDDEN (1-2)
-	- dict: hidden indicators
-
 	- ideas:
 		1) simple lengthwise pass through clue
 		2) parse out indicator words

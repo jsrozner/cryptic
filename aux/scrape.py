@@ -8,11 +8,13 @@ web_page = "http://bestforpuzzles.com/daily-cryptic/puzzles/"
 
 inc = datetime.timedelta(days=1)
 
+
 def make_date_string(date):
     first = date.strftime("%Y-%m")
     second = date.strftime("%Y-%m-%d")
     url = "%s%s/dc1-%s.html" % (web_page, first, second)
     return url
+
 
 date = datetime.date.today()
 for i in range(0, 60):

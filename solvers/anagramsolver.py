@@ -9,6 +9,7 @@ class AnagramSolver(IndicatorSolver):
     """ A solver for anagram type clues.
 
     """
+
     def __init__(self, indicator_file, anagrammer):
         """
         :type anagrammer: anagrammer.Anagrammer
@@ -60,8 +61,9 @@ class AnagramSolver(IndicatorSolver):
                         exclude = indices + [indicator_pos]
                         score = clue.check_definition(a, exclude)
                         if score > 0.0:
-                            soln =  Solution(a, score, clue_type=self.type,
-                                             indicator=clue.terms[indicator_pos].word)
+                            soln = Solution(a, score, clue_type=self.type,
+                                            indicator=clue.terms[
+                                                indicator_pos].word)
                             soln.add_note("Anagrammed from " + letter_set)
                             solns.append(soln)
 
@@ -95,7 +97,8 @@ class AnagramSolver(IndicatorSolver):
             if curr_len + word_len == goal_len:
                 all.append([i])
             elif curr_len + word_len < goal_len:
-                rest = self.get_subsets(curr_len + word_len, goal_len, i + 1, word_lengths)
+                rest = self.get_subsets(curr_len + word_len, goal_len, i + 1,
+                                        word_lengths)
                 for set in rest:
                     all.append([i] + set)
         return all

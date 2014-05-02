@@ -9,4 +9,4 @@ PAPER
 		- omit certain words, find longest from one end
 
 FUTURE
-	- machine learn
+	- machine learn - dynamically modify indicator files

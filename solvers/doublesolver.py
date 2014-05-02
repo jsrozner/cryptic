@@ -7,10 +7,12 @@ from solution import Solution
 
 min_word_length = 3
 
+
 class DoubleSolver(IndicatorSolver):
     """ A solver for hidden  type clues.
 
     """
+
     def __init__(self):
         """
         :type anagrammer: anagrammer.Anagrammer

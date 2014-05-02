@@ -6,10 +6,12 @@ import logging
 
 min_indicator_distance = 0.65
 
+
 class IndicatorType(Enum):
     anagram = 1
     double = 2
     hidden = 3
+
 
 class IndicatorSolver(object):
     """ Base class for indicator solvers
@@ -32,6 +34,9 @@ class IndicatorSolver(object):
         else:
             self.indcators = None
         self.anagrammer = anagrammer
+
+    def __str__(self):
+        return str(self.type)
 
 
 class IndicatorDictionary:

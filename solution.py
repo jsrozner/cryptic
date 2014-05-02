@@ -9,12 +9,11 @@ class Solution(object):
 
     def __init__(self, soln, score, clue_type, indicator=""):
         """
-        :type clue_type: solver.IndicatorType
-        :type score: float
-        :param clue_type:
-        :param indicator: str
-        :param soln: str
-        :param score:
+        :param solver.IndicatorType clue_type: solver that gave this clue.
+        :param str indicator: The word that indicates the solver type if
+            there was one.
+        :param str soln: The word of the solution
+        :param float score: The solution's score
         """
         self.score = score
         note = 'Clue type ' + str(clue_type)
@@ -26,12 +25,13 @@ class Solution(object):
     def add_note(self, note):
         """ Add a note to a solution
 
-        :param note: string : the note to be added
+        :param str note: the note to be added
         """
         self.notes.append(note)
 
     def __str__(self):
-        ret = "Solution: " + self.solution + "\t Score: " + str(self.score) + "\t\n"
+        ret = "Solution: " + self.solution + "\t Score: " + \
+              str(self.score) + "\t\n"
         ret += "\n".join(self.notes)
         return ret
 

@@ -1,5 +1,6 @@
 import argparse
 import logging
+import re
 
 from anagrammer import Anagrammer
 from clue import Clue
@@ -12,12 +13,21 @@ from solvers.hiddensolver import HiddenSolver
 anagram_indicator_file = "data/anagram.txt"
 hidden_indicator_file = "data/hidden.txt"
 
+# other data files
 anagram_database_file = "data/anagrams.db"
+
+# allow args to be accessed in other files
+cmd_line_args = None
 
 
 class Parser(object):
-    def __init__(self, args):
-        self.args = args
+    """ A parser.
+
+    Attributes:
+        solvers
+        aux_solvers
+    """
+    def __init__(self):
         # Generate solvers.
         anagrammer = Anagrammer(anagram_database_file)
 
@@ -29,28 +39,63 @@ class Parser(object):
         self.aux_solvers = [double_solver]
 
     def parse(self, input_line, print_solns=True):
-        clue = Clue(input_line)
-        solns = []
+        """ Parse a given line of input.
 
+        :param str input_line:
+        :param bool print_solns: Whether to print solns
+        :return: List of solution objects
+        :rtype: list[solution.Solution]
+        """
+
+        # expect "... (len)"
+        # todo: implement double clues
+        if re.search("\(\d,\d\)$", input_line):
+            logging.warning("Double clues aren't implemented yet.")
+            return []
+
+        # allow lengths given outside of parenthesis
+        split = re.search("(.*)(\d|\(\d\))$", input_line)
+        if not split:
+            logging.warning("No length specified")
+            return []
+
+        clue_words = split.group(1).strip()
+        answer_length = split.group(2)
+        try:
+            answer_length = int(answer_length)
+        except ValueError:
+            logging.warning("No answer length given for clue")
+            return []
+
+        clue = Clue(clue_words, answer_length)
+
+        solns = []
         for s in self.solvers:
-            solns += s.get_solutions(clue)
+            logging.info("Running " + str(s))
+            new_solns = s.get_solutions(clue)
+            logging.info(str(s) + "got " + str(len(new_solns)) + " solutions")
+            solns += new_solns
         solns = sorted(solns)
 
-        # todo: arbitrary cutoff
         # run secondary, expensive solvers
+        # todo: this is an arbitrary cutoff
         if not solns or solns[-1].score < 100.0:
+            logging.info("Running auxiliary solvers")
             for s in self.aux_solvers:
-                solns += s.get_solutions(clue)
+                logging.info("Running " + str(s))
+                new_solns = s.get_solutions(clue)
+                logging.info(str(s) + "got " + str(len(new_solns)) + " solns")
+                solns += new_solns
+        solns = sorted(solns)
 
         # todo: get rid of duplicates?
         # todo: scale relative anagramers
-        ret = sorted(solns)[-self.args.num_solns:]
+        ret = sorted(solns)[cmd_line_args.num_solns:]
         if print_solns:
             for soln in ret:
-                if self.args.no_solution_breakdown:
+                if cmd_line_args.no_solution_breakdown:
                     print soln.solution
                 else:
-                    print "possible solutions:"
                     print str(soln) + "\n"
 
         return ret
@@ -63,7 +108,8 @@ def main():
     arg_parser.add_argument("-v", "--logging", type=str, default="DEBUG",
                             help='Verbosity logging ')
     arg_parser.add_argument("--no-solution-breakdown", action="store_true",
-                            help="Print only solution words with no explanation.")
+                            help="Print only solution words with no "
+                                 "explanation.")
     arg_parser.add_argument("--num-solns", type=int, default=10,
                             help="Number of solutions to show.")
     arg_parser.add_argument("--input-file", type=str, default="",
@@ -72,22 +118,24 @@ def main():
                             help="Use wordnet rather than thesaurus")
     arg_parser.add_argument("--test", type=str, default="",
                             help="Run test file")
-    args = arg_parser.parse_args()
+    global cmd_line_args
+    cmd_line_args = arg_parser.parse_args()
 
     # Set logging level
-    logging_level = getattr(logging, args.logging.upper())
+    logging_level = getattr(logging, cmd_line_args.logging.upper())
     if not isinstance(logging_level, int):
-        raise ValueError('Invalid log level: %s' % args.logging)
+        raise ValueError('Invalid log level: %s' % cmd_line_args.logging)
     logging.basicConfig(level=logging_level)
-    logging.info("Setting verbosity to " + str(args.logging))
+    logging.info("Setting verbosity to " + str(cmd_line_args.logging))
 
-    parser = Parser(args)
+    parser = Parser()
 
-    if args.test != "":
+    if cmd_line_args.test != "":
+        print "Running in test mode..."
         correct = 0
         correct_but_not_first = 0
         total = 0
-        with open(args.test, "r") as f:
+        with open(cmd_line_args.test, "r") as f:
             lines = f.readlines()
             for i in range(0, len(lines), 2):
                 total += 1
@@ -104,12 +152,15 @@ def main():
         print "Out of total: %d\t %d correct\t %d correct but not first" % \
               (total, correct, correct_but_not_first)
 
-    elif args.input_file == "":
+    elif cmd_line_args.input_file == "":
+        print "Running in interactive mode...\n" \
+              "Clues should be of the form '....(num)'"
         while True:
             line = raw_input()
             parser.parse(line)
     else:
-        with open(args.input_file, "r") as f:
+        print "Running in file input mode..."
+        with open(cmd_line_args.input_file, "r") as f:
             for line in f.readlines():
                 print line
                 parser.parse(line)
