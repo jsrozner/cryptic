@@ -14,11 +14,6 @@ class DoubleSolver(IndicatorSolver):
     """
 
     def __init__(self):
-        """
-        :type anagrammer: anagrammer.Anagrammer
-        :param indicator_file: str
-        :param anagrammer:
-        """
         IndicatorSolver.__init__(self, IndicatorType.double)
         logging.info("Initializing double solver")
 
@@ -44,17 +39,17 @@ class DoubleSolver(IndicatorSolver):
         for term in left:
             if len(term.word) < min_word_length:
                 continue
-            left_syns += term.syns[1]
+            left_syns += term.small_syn_set
         for term in right:
             if len(term.word) < min_word_length:
                 continue
-            right_syns += term.syns[1]
+            right_syns += term.small_syn_set
         left_syns = set(left_syns)
-        right_syns = set(left_syns)
+        right_syns = set(right_syns)
         intersect = get_syn_intersection(left_syns, right_syns)
         valid = [w for w in intersect if len(w) == clue.answer_length]
-        if len(valid) > 30:
-            logging.warning("Too many double words to consider")
+        if len(valid) > 100:
+            logging.warning("Too many double words to consider: " + str(len(valid)))
             return []
         for word in valid:
             if len(word) == clue.answer_length:
@@ -64,4 +59,3 @@ class DoubleSolver(IndicatorSolver):
                                       clue_type=self.type))
 
         return solns
-

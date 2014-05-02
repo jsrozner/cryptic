@@ -133,7 +133,7 @@ def compare_syns(syns1, syns2):
     :param set[str] syns2:
     :return: Weighted (by depth) score of intersection
     """
-    score = 0.0
+    score = 1.0     # todo: should we keep a min score?
     for i in range(0, len(syns1)):
         for j in range(0, len(syns2)):
             same_syns = syns1[i].intersection(syns2[j])

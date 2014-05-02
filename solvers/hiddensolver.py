@@ -44,7 +44,8 @@ class HiddenSolver(IndicatorSolver):
 
         # todo: consider not having first for loop
         for pos in indicator_positions:
-            hidden_words = self.get_valid_letters(clue)
+            hidden_words = self.get_valid_letters(clue, pos, True)
+            hidden_words += self.get_valid_letters(clue, pos, False)
 
             for (indices, word) in hidden_words:
                 logging.info('Checking hidden word ' + word)
@@ -52,18 +53,34 @@ class HiddenSolver(IndicatorSolver):
                 score = clue.check_definition(word, omit)
                 if score > 0.0:
                     soln = Solution(word, score, clue_type=self.type,
-                                    indicator=word)
+                                    indicator=clue.clue_words[pos])
                     solns.append(soln)
 
         return solns
 
     #todo: map character position to word index
-    def get_valid_letters(self, clue):
+    def get_valid_letters(self, clue, pos, get_left):
+        """ pos specifies split index. get_left says get_left of the pos
+        otherwise get right of it.
+
+        :param clue:
+        :param pos:
+        :param get_left:
+        :return:
+        """
         valid_hidden_words = []
         full_string = ""
         length = 0
         pos_map = OrderedDict()
-        for i in range(0, len(clue.terms)):
+
+        r = range(0, pos)
+        if not get_left:
+            r = range(pos + 1, len(clue.terms))
+
+        for i in r:
+            # don't include indicator word
+            if i == pos:
+                continue
             word = clue.terms[i].word
             pos_map[length] = i
             full_string += word

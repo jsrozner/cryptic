@@ -28,6 +28,7 @@ class Term:
                       str(depth))
         self.related_words = common.get_wn_related_words(self.word, depth)
         self.syns = thesaurus.get_all_synonyms(self.word, depth)
+        self.small_syn_set = thesaurus.get_small_syn_set(self.word)
         logging.debug(self.syns)
 
 
@@ -110,5 +111,7 @@ class Clue:
 
         logging.info("wn_score: " + str(wn_score))
         logging.info("syn_score: " + str(syn_score))
-        # todo: check cmd line arg
-        return syn_score / len(term_range)
+        if wn_score > syn_score:
+            return wn_score / len(term_range)
+        else:
+            return syn_score / len(term_range)

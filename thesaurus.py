@@ -42,21 +42,17 @@ class Thesaurus(object):
         :return: list of syns after getting back_syns
         :rtype: list[str]
         """
-        all_syns = []
+        syns = []
         if word in self.back_thes:
             syns = self.back_thes[word]
-            for s in syns:
-                all_syns += self.thes_look_up(s)
 
-        return all_syns
+        return syns
 
-    def __internal_get_all_synonyms(self, word):
-        """
-        :param str word:
-        :return: Sorted list of all syns
-        :rtype: list[str]
-        """
-        return sorted(set(self.thes_look_up(word) + self.back_look_up(word)))
+    def get_small_syn_set(self, word):
+        forward_syns = self.thes_look_up(word)
+        if not forward_syns:
+            return self.back_look_up(word)
+        return forward_syns
 
     def get_all_synonyms(self, word, depth=2):
         """ Get all syns of a word up to depth
@@ -76,8 +72,9 @@ class Thesaurus(object):
             new_syns = []
             for syn in syns[i - 1]:
                 new_syns += self.thes_look_up(syn)
-                # todo: maybe only do back look up if nothing returned from forward
-                new_syns += self.back_look_up(syn)
+                back_looks = self.back_look_up(syn)
+                for back in back_looks:
+                    new_syns += self.thes_look_up(back)
 
             new_syns = set(new_syns).difference(all_syns)  # don't repeat syns
             syns.append(new_syns)  # syns[i]

@@ -83,7 +83,7 @@ class Parser(object):
 
         # run secondary, expensive solvers
         # todo: this is an arbitrary cutoff
-        if not solns or solns[-1].score < 100.0:
+        if not solns or solns[-1].score < 40.0:
             logging.info("Running auxiliary solvers")
             for s in self.aux_solvers:
                 logging.info("Running " + str(s))
@@ -152,10 +152,10 @@ def main():
                     print "expect soln: " + correct_soln
 
                 solns = parser.parse(clue, print_solns=test_print)
-                if solns and solns[0].solution == correct_soln:
+                if solns and solns[-1].solution == correct_soln:
                     correct += 1
                 else:
-                    for s in solns[1:]:
+                    for s in solns[:-1]:
                         if s.solution == correct_soln:
                             correct_but_not_first += 1
         print "Out of total: %d\t %d correct\t %d correct but not first" % \

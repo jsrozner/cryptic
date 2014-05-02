@@ -1,10 +1,11 @@
 from bisect import bisect_left
 from difflib import get_close_matches
 from enum import Enum
+from os.path import commonprefix
 
 import logging
 
-min_indicator_distance = 0.65
+min_indicator_distance = 0.70
 
 
 class IndicatorType(Enum):
@@ -63,19 +64,35 @@ class IndicatorDictionary:
         i = bisect_left(self.dict, word)
         nearest_matches = self.dict[i - 1: i + 1]
 
-        # optimistically ignore subsequent words
-        # todo: actually check further indicator
         # todo: return length of match as well
         for i in range(0, len(nearest_matches)):
-            nearest_matches[i] = nearest_matches[i].split()[0]
+            split = nearest_matches[i].split()
+            # require multi-word indicators to match exactly
+            # todo: after this, it's exact so don't use get_closest_matches
+            if len(split) > 1 and \
+                    not self.match_multiple_words(split, word_array[index:]):
+                nearest_matches[i] = ""
 
         match = get_close_matches(word, nearest_matches, n=1,
                                   cutoff=min_indicator_distance)
-        if match:
-            logging.debug("Closest match to " + word + " is " + match[0])
-            return match[0]
-        else:
+        if not match:
             return None
+
+        match = match[0]
+        # todo: arbitrary, essentially checking stem of word
+        if word != match and len(commonprefix([word, match])) < 3:
+            return None
+
+        logging.debug("Closest match to " + word + " is " + match)
+        return match
+
+    def match_multiple_words(self, indicator_array, word_array):
+        for i in range(0, len(indicator_array)):
+            if i >= len(word_array):
+                return False
+            if indicator_array[i] != word_array[i]:
+                return False
+        return True
 
     def get_all_indicator_positions(self, word_array):
         """ Return positions of all indicator words
@@ -87,7 +104,6 @@ class IndicatorDictionary:
         indicator_positions = []
         for i in range(0, len(word_array)):
             word = word_array[i]
-            logging.debug("Looking for matching indicator: " + word)
             if self.lookup(i, word_array) is not None:
                 logging.info("Got indicator: " + word)
                 indicator_positions.append(i)
