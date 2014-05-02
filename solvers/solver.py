@@ -4,7 +4,7 @@ from enum import Enum
 
 import logging
 
-min_indicator_distance = 0.75
+min_indicator_distance = 0.65
 
 
 class IndicatorType(Enum):

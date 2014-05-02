@@ -133,6 +133,7 @@ def main():
 
     parser = Parser()
 
+    test_print = True
     if cmd_line_args.test != "":
         print "Running in test mode..."
         correct = 0
@@ -145,7 +146,12 @@ def main():
                 clue = lines[i]
                 correct_soln = lines[i + 1].strip()
 
-                solns = parser.parse(clue, print_solns=False)
+                if test_print:
+                    print "--------------"
+                    print clue
+                    print "expect soln: " + correct_soln
+
+                solns = parser.parse(clue, print_solns=test_print)
                 if solns and solns[0].solution == correct_soln:
                     correct += 1
                 else:
