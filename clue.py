@@ -29,7 +29,6 @@ class Term:
         self.related_words = common.get_wn_related_words(self.word, depth)
         self.syns = thesaurus.get_all_synonyms(self.word, depth)
         self.small_syn_set = thesaurus.get_small_syn_set(self.word)
-        logging.debug(self.syns)
 
 
 class Clue:
@@ -61,7 +60,7 @@ class Clue:
         logging.debug("Clue ends with exclamation: " +
                       str(self.ends_with_exclamation))
 
-        input_clue = mystring.strip_punctuation(clue)  # remove punctuation
+        input_clue = mystring.strip_punctuation(clue.lower())  # remove punctuation
         self.clue_words = input_clue.split()
 
         self.word_lengths = map(len, self.clue_words)
@@ -91,7 +90,9 @@ class Clue:
         term_range = range(0, last)  # default term range
 
         # Take only one half of the clue if split_in_half is true
-        if omit and split_in_half:
+        # But if ends with exclamation, can reuse words
+        # todo mark indicator separately from anagram word, e.g.
+        if omit and split_in_half and not self.ends_with_exclamation:
             if 0 in omit and last in omit:  # both sides of clue are used
                 logging.debug("Both sides of clue are used. Score is 0.0")
                 return 0.0

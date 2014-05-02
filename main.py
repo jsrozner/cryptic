@@ -21,6 +21,7 @@ anagram_database_file = "data/anagrams.db"
 
 # allow args to be accessed in other files
 cmd_line_args = None
+secondary_solver_cutoff = 40.0
 
 
 class Parser(object):
@@ -42,6 +43,31 @@ class Parser(object):
         self.solvers = [anagram_solver, hidden_solver, reverse_solver]
         self.aux_solvers = [double_solver]
 
+    def parse_length(self, input_line):
+        # expect "... (len)"
+        # todo: implement double clues better
+        split = re.search("(.*)\((\d),(\d)\)", input_line)
+        if split:
+            logging.warning("Double clues aren't implemented yet.")
+            clue_words = split.group(1).strip()
+            answer_length = int(split.group(2)) + int(split.group(3))
+            return clue_words, answer_length
+
+        # allow lengths given outside of parenthesis
+        split = re.search("(.*)\((\d*|\(\d*\))", input_line)
+        if not split:
+            logging.warning("No length specified")
+            return [], 0
+
+        clue_words = split.group(1).strip()
+        answer_length = split.group(2)
+        try:
+            answer_length = int(mystring.strip_punctuation(answer_length))
+        except ValueError:
+            logging.warning("No answer length given for clue")
+            return [], 0
+        return clue_words, answer_length
+
     def parse(self, input_line, print_solns=True):
         """ Parse a given line of input.
 
@@ -50,25 +76,10 @@ class Parser(object):
         :return: List of solution objects
         :rtype: list[solution.Solution]
         """
-
-        # expect "... (len)"
-        # todo: implement double clues
-        if re.search("\(\d,\d\)$", input_line):
-            logging.warning("Double clues aren't implemented yet.")
-            return []
-
-        # allow lengths given outside of parenthesis
-        split = re.search("(.*)(\d|\(\d\))$", input_line)
-        if not split:
-            logging.warning("No length specified")
-            return []
-
-        clue_words = split.group(1).strip()
-        answer_length = split.group(2)
-        try:
-            answer_length = int(mystring.strip_punctuation(answer_length))
-        except ValueError:
-            logging.warning("No answer length given for clue")
+        logging.debug("parsing")
+        clue_words, answer_length = self.parse_length(input_line)
+        if not clue_words or answer_length == 0:   # error
+            logging.debug("failed to parse out length")
             return []
 
         clue = Clue(clue_words, answer_length)
@@ -82,8 +93,7 @@ class Parser(object):
         solns = sorted(solns)
 
         # run secondary, expensive solvers
-        # todo: this is an arbitrary cutoff
-        if not solns or solns[-1].score < 40.0:
+        if not solns or solns[-1].score < secondary_solver_cutoff:
             logging.info("Running auxiliary solvers")
             for s in self.aux_solvers:
                 logging.info("Running " + str(s))
@@ -117,8 +127,6 @@ def main():
                             help="Number of solutions to show.")
     arg_parser.add_argument("--input-file", type=str, default="",
                             help="Run on input list of clues, not interactive")
-    arg_parser.add_argument("--use-wn", action="store_true",
-                            help="Use wordnet rather than thesaurus")
     arg_parser.add_argument("--test", type=str, default="",
                             help="Run test file")
     global cmd_line_args
@@ -148,8 +156,8 @@ def main():
 
                 if test_print:
                     print "--------------"
-                    print clue
-                    print "expect soln: " + correct_soln
+                    print clue.strip()
+                    print "expect:\t" + correct_soln + "\n"
 
                 solns = parser.parse(clue, print_solns=test_print)
                 if solns and solns[-1].solution == correct_soln:

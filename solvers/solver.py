@@ -55,12 +55,13 @@ class IndicatorDictionary:
     def lookup(self, index, word_array):
         """ Get closest match to word (accepts imperfect matches)
 
-        :param word: word to check in indicator dictionary
-        :type word: str
+        :param list[str] word_array: str
+        :param int index: index of word in word_array to check
         :return: closest match or None if none found
         :rtype: str
         """
         word = word_array[index]
+        logging.debug("looking up in indicator dictionary: " + word)
         i = bisect_left(self.dict, word)
         nearest_matches = self.dict[i - 1: i + 1]
 

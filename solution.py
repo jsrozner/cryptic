@@ -30,8 +30,8 @@ class Solution(object):
         self.notes.append(note)
 
     def __str__(self):
-        ret = "Solution: " + self.solution + "\t Score: " + \
-              str(self.score) + "\t\n"
+        ret = self.solution
+        ret += "\nScore: " + str(self.score) + "\n"
         ret += "\n".join(self.notes)
         return ret
 
