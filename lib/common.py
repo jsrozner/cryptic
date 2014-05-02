@@ -140,3 +140,43 @@ def compare_syns(syns1, syns2):
             score += 1.0 / (1 + (i * j)) * len(same_syns)
 
     return score
+
+
+
+# todo: this is arbitrary
+min_valid_word_length = 4
+
+def get_valid_surrounding_indices(start_index, words, max_terms=1):
+    ignore = []
+    length = len(words)
+
+    i = start_index - 1
+    found_left = []
+    while True:
+        if i <= 0:
+            break
+        if len(found_left) == max_terms:
+            break
+        if len(words[i]) < min_valid_word_length:
+            ignore.append(i)
+        else:
+            found_left.append(i)
+        i -= 1
+
+    i = start_index + 1
+    found_right = []
+    while True:
+        if i >= length:
+            break
+        if len(found_right) == max_terms:
+            break
+        if len(words[i]) < min_valid_word_length:
+            ignore.append(i)
+        else:
+            found_right.append(i)
+        i += 1
+
+    return found_left + found_right, ignore
+
+
+

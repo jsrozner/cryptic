@@ -8,11 +8,13 @@ from lib import mystring
 from solvers.anagramsolver import AnagramSolver
 from solvers.doublesolver import DoubleSolver
 from solvers.hiddensolver import HiddenSolver
+from solvers.reversesolver import ReverseSolver
 
 
 # corpuses
 anagram_indicator_file = "data/anagram.txt"
 hidden_indicator_file = "data/hidden.txt"
+reverse_indicator_file = "data/reversal.txt"
 
 # other data files
 anagram_database_file = "data/anagrams.db"
@@ -35,8 +37,9 @@ class Parser(object):
         anagram_solver = AnagramSolver(anagram_indicator_file, anagrammer)
         double_solver = DoubleSolver()
         hidden_solver = HiddenSolver(hidden_indicator_file, anagrammer)
+        reverse_solver = ReverseSolver(reverse_indicator_file, anagrammer)
 
-        self.solvers = [anagram_solver, hidden_solver]
+        self.solvers = [anagram_solver, hidden_solver, reverse_solver]
         self.aux_solvers = [double_solver]
 
     def parse(self, input_line, print_solns=True):

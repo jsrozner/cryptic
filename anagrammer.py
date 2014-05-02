@@ -53,6 +53,5 @@ class Anagrammer(object):
         :return: True if present in anagram dictionary
         :rtype: bool
         """
-        logging.debug("Checking anagram db if is word: " + word)
         results = self.__look_up(word)
         return word in results

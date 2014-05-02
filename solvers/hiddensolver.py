@@ -35,22 +35,25 @@ class HiddenSolver(IndicatorSolver):
         logging.info("Getting hidden solutions")
         solns = []
 
-        for i in range(0, len(clue.terms)):
-            term = clue.terms[i]
-            logging.debug("Looking for matching indicator: " + term.word)
-            if self.indicators.lookup(term.word) is not None:
-                logging.info("Got indicator: " + term.word)
+        indicator_positions = \
+            self.indicators.get_all_indicator_positions(clue.clue_words)
 
-                hidden_words = self.get_valid_letters(clue)
+        if not indicator_positions:
+            logging.debug("No valid indicators")
+            return []
 
-                for (indices, word) in hidden_words:
-                    logging.info('Checking hidden word ' + word)
-                    omit = indices + [i]
-                    score = clue.check_definition(word, omit)
-                    if score > 0.0:
-                        soln = Solution(word, score, clue_type=self.type,
-                                        indicator=term.word)
-                        solns.append(soln)
+        # todo: consider not having first for loop
+        for pos in indicator_positions:
+            hidden_words = self.get_valid_letters(clue)
+
+            for (indices, word) in hidden_words:
+                logging.info('Checking hidden word ' + word)
+                omit = indices + [pos]
+                score = clue.check_definition(word, omit)
+                if score > 0.0:
+                    soln = Solution(word, score, clue_type=self.type,
+                                    indicator=word)
+                    solns.append(soln)
 
         return solns
 
@@ -75,13 +78,11 @@ class HiddenSolver(IndicatorSolver):
                 if i in pos_map.keys():
                     continue
                 left_pos = bisect_right(pos_map.keys(), i)
-                if left_pos == len(pos_map.keys()) or pos_map.keys()[
-                    left_pos] != i:
+                if left_pos == len(pos_map.keys()) or pos_map.keys()[left_pos] != i:
                     left_pos -= 1
                 right_pos = bisect_right(pos_map.keys(),
                                          i + clue.answer_length - 1)
-                if right_pos == len(pos_map.keys()) or pos_map.keys()[
-                    right_pos] != i + clue.answer_length - 1:
+                if right_pos == len(pos_map.keys()) or pos_map.keys()[right_pos] != i + clue.answer_length - 1:
                     right_pos -= 1
                 indices = [left_pos, right_pos]
                 valid_hidden_words.append((indices, letters))

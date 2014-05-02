@@ -29,43 +29,42 @@ class AnagramSolver(IndicatorSolver):
         :return: List of solutions
         """
         logging.info("Getting anagram solutions")
+
+        indicator_positions = \
+            self.indicators.get_all_indicator_positions(clue.clue_words)
+
+        # only check for valid subsets once
+        if not indicator_positions:
+            logging.info("No valid indicators")
+            return []
+
         solns = []
         already_permuted = set([])
 
-        indicator_positions = []
-        for i in range(0, len(clue.terms)):
-            term = clue.terms[i]
-            logging.debug("Looking for matching indicator: " + term.word)
-            if self.indicators.lookup(term.word) is not None:
-                logging.info("Got indicator: " + term.word)
-                indicator_positions.append(i)
+        letter_sets_to_permute = self.get_valid_length_combos(clue)
+        logging.debug(str(letter_sets_to_permute))
 
-        # only check for valid subsets once
-        if indicator_positions:
-            letter_sets_to_permute = self.get_valid_length_combos(clue)
-            logging.debug(str(letter_sets_to_permute))
+        for (indices, letter_set) in letter_sets_to_permute:
+            if letter_set in already_permuted:
+                continue
+            else:
+                already_permuted.add("".join(sorted(letter_set)))
 
-            for (indices, letter_set) in letter_sets_to_permute:
-                if letter_set in already_permuted:
-                    continue
-                else:
-                    already_permuted.add("".join(sorted(letter_set)))
+            logging.info("Permuting " + letter_set)
+            anagrams = self.anagrammer.get_anagrams(letter_set)
+            logging.info("Valid anagrams: " + str(anagrams))
 
-                logging.info("Permuting " + letter_set)
-                anagrams = self.anagrammer.get_anagrams(letter_set)
-                logging.info("Valid anagrams: " + str(anagrams))
-
-                #todo: consider not having first for loop
-                for indicator_pos in indicator_positions:
-                    for a in anagrams:
-                        exclude = indices + [indicator_pos]
-                        score = clue.check_definition(a, exclude)
-                        if score > 0.0:
-                            soln = Solution(a, score, clue_type=self.type,
-                                            indicator=clue.terms[
-                                                indicator_pos].word)
-                            soln.add_note("Anagrammed from " + letter_set)
-                            solns.append(soln)
+            #todo: consider not having first for loop
+            for indicator_pos in indicator_positions:
+                for a in anagrams:
+                    exclude = indices + [indicator_pos]
+                    score = clue.check_definition(a, exclude)
+                    if score > 0.0:
+                        soln = Solution(a, score, clue_type=self.type,
+                                        indicator=clue.terms[
+                                            indicator_pos].word)
+                        soln.add_note("Anagrammed from " + letter_set)
+                        solns.append(soln)
 
         return solns
 
