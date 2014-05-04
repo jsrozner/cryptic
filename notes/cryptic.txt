@@ -1,3 +1,6 @@
+not all tricks and implementations discussed here
+
+
 BASIC
 	- flags
 		- depth of similarity search
