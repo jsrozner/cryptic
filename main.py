@@ -46,7 +46,7 @@ class Parser(object):
     def parse_length(self, input_line):
         # expect "... (len)"
         # todo: implement double clues better
-        split = re.search("(.*)\((\d),(\d)\)", input_line)
+        split = re.search("(.*)\((\d+),(\d+)\)", input_line)
         if split:
             logging.warning("Double clues aren't implemented yet.")
             clue_words = split.group(1).strip()
@@ -54,7 +54,9 @@ class Parser(object):
             return clue_words, answer_length
 
         # allow lengths given outside of parenthesis
-        split = re.search("(.*)\((\d*|\(\d*\))", input_line)
+        split = re.search("([^\d]*)(\d+)$", input_line)
+        if not split:
+            split = re.search("([^\d]*)\((\d+)\)$", input_line)
         if not split:
             logging.warning("No length specified")
             return [], 0
