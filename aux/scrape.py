@@ -1,3 +1,8 @@
+"""
+Scrape from bestforpuzzles.com the clues of cryptic crossword puzzles.
+"""
+
+
 import urllib2
 import datetime
 

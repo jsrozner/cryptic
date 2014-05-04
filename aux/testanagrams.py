@@ -1,3 +1,10 @@
+"""
+Get the anagrams associated with a given word.
+
+Usage: python testanagrams.py <testword>
+"""
+
+
 import shelve
 import sys
 

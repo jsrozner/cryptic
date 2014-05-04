@@ -39,11 +39,11 @@ class DoubleSolver(IndicatorSolver):
         for term in left:
             if len(term.word) < min_word_length:
                 continue
-            left_syns += term.small_syn_set
+            left_syns += term.syns[1]
         for term in right:
             if len(term.word) < min_word_length:
                 continue
-            right_syns += term.small_syn_set
+            right_syns += term.syns[1]
         left_syns = set(left_syns)
         right_syns = set(right_syns)
         intersect = get_syn_intersection(left_syns, right_syns)

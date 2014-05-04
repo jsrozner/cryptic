@@ -1,3 +1,10 @@
+"""
+Get the synonyms and back-synonyms associated with a given word.
+
+Usage: python tesththesaurus.py <lookup-word>
+"""
+
+
 import shelve
 import sys
 

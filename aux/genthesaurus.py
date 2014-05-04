@@ -1,8 +1,14 @@
+"""
+Generate a thesaurus from a thesaurus text file.
+
+"""
+
+
 import shelve
 
 db = shelve.open("data/thesaurus.db")
 
-with open("/Users/jsrozner/Downloads/mthes10/mthesaur.txt") as f:
+with open("/Users/Downloads/mthes10/mthesaur.txt") as f:
     for x in f.readlines():
         x = x.strip().lower()
         all_words = x.split(",")

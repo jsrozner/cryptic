@@ -1,9 +1,14 @@
+"""
+Augment an anagrams database with words from a new dictionary.
+"""
+
+
 import shelve
 import bisect
 
 db = shelve.open("data/anagrams.db")
 
-with open("/Users/jsrozner/Downloads/us/US.dic") as f:
+with open("US.dic") as f:
     for x in f.readlines():
         x = x.strip()
         str = "".join(sorted(x))

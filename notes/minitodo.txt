@@ -1,6 +1,7 @@
 CODE
 	- unrevised
 		- solvers folder
+		- aux
 
 
 ANAGRAMS (2)
@@ -15,6 +16,9 @@ HIDDEN
 
 solutions: don't repeat same soln with diff indicator (take best soln of a given word)
 		- debugging output on matched terms
+
+REVERSALS
+	- indicate down or across
 
 ------
 

@@ -1,16 +1,5 @@
 WHAT I'VE DONE
 
-- RESEARCH
-	- types of clues, considerations on solving them
-	- library searches, dictionary searches
-
-REQUIREMENTS
-	- download nltk corpuses
-
-- anagrams
-	- initially tried permuting and pycharm
-	- created database of anagrams instead using shelve
-
 - scraped a bunch of puzzles
 	- calibrated tests
 
@@ -25,3 +14,25 @@ REPRESENTATIONS
 		- execute synonym searches to yield a term array, where each term has many things
 	- keep full string less punctuation for hidden search
 	- possible solutions with scores
+
+difflib
+
+explanation at how clue was arrived at
+
+add comments to aux files
+
+full implementation
+	- take advantage of overlaps
+
+IMPROVEMENTS
+	- more selective in words we play with
+	- implemented pure solution types
+
+	- split initially based on semantic meaningness of sides of clue
+
+	- stemming
+
+	- use google api - see article 
+	- machine learn - dynamically modify indicator files, scoring
+		include list of clues that are unsolved to see why they're not solving
+	- syn and definition sets should use stop sets rather than min_def_word_length

@@ -1,3 +1,8 @@
+"""
+Combine two indicator files. In this case the input files do not need to be
+sorted.
+
+"""
 with open("data/anagram.txt") as f1:
     with open("data/anagram2.txt") as f2:
         set1 = set([x.strip() for x in f1.readlines()])
